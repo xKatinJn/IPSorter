@@ -1,3 +1,6 @@
+from pprint import pprint
+
+
 def unpack_ipv6(ipv6_packed: list) -> None:
 
     """
@@ -37,7 +40,8 @@ ipv4_raw = [
     '125.183.104.209',
     '214.29.56.253',
     '233.196.176.19',
-    '34.71.130.177']
+    '34.71.130.177'
+]
 ipv6_raw = [
     '6ab3::ca1f:c840:f952:b286:25f2',
     '6ab3:aaaa::ca1f:c840:f952:b286:25f2',
@@ -89,7 +93,7 @@ try:
                                         lambda a:
                                             lambda v: a(a, v))(
                                                 lambda s, x: x if len(x) == 4 else s(s, '0'+x))(i)
-                                                    for i in x.split(':')), 16))
+                                            for i in x.split(':')), 16))
 except RecursionError:
     """
     Raising error with description
@@ -102,5 +106,8 @@ Output for checking the result.
 If you want you can remove these two
 lines below.
 """
-print(ipv4)
-print(ipv6)
+print('Sorted list of IPv4:')
+pprint(ipv4)
+print()
+print('Sorted list of IPv6:')
+pprint(ipv6)
