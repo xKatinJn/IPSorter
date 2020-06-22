@@ -9,6 +9,7 @@ def unpack_ipv6(ipv6_packed: list) -> None:
     """
 
     for i, ip in enumerate(ipv6_packed):
+        ip = ip.replace('/', ':')
         splitted_ip = ip.split(':')
         if '' in splitted_ip:
             sliced_pre = splitted_ip[:splitted_ip.index('')]
@@ -17,11 +18,24 @@ def unpack_ipv6(ipv6_packed: list) -> None:
                 sliced_pre.remove('')
             while '' in sliced_after:
                 sliced_after.remove('')
-            range(8-len(sliced_pre+sliced_after))
-            for _ in range(8-len(sliced_pre+sliced_after)):
-                sliced_pre.append('0000')
+            if (splitted_ip.count('') < 4 and ipv6_packed[i].rfind('/') != -1) or len(splitted_ip) > 8:
+                for _ in range(9-len(sliced_pre+sliced_after)):
+                    sliced_pre.append('0000')
+            else:
+                for _ in range(8-len(sliced_pre+sliced_after)):
+                    sliced_pre.append('0000')
+
             unpacked_value = ':'.join(sliced_pre + sliced_after)
             ipv6_packed[i] = unpacked_value
+        else:
+            ipv6_packed[i] = ip
+
+
+def restore_ip(ipv6_sorted):
+    for i, ipv6_element in enumerate(ipv6_sorted):
+        if len(ipv6_element.split(':')) > 8:
+            port_index = ipv6_element.rfind(':')
+            ipv6_sorted[i] = ipv6_element[:port_index] + '/' + ipv6_element[port_index+1:]
 
 
 """
@@ -43,11 +57,16 @@ ipv4_raw = [
     '34.71.130.177'
 ]
 ipv6_raw = [
-    '6ab3::ca1f:c840:f952:b286:25f2',
-    '6ab3:aaaa::ca1f:c840:f952:b286:25f2',
+    '2001::/32',
+    '536c:b906:3f24:5124:5e43:d9ee:22d8:6c30/67',
+    '536c:b906:3f24:5124:5e43:d9ee:22d8:6c30/66',
+    '0000::/64',
+    '::/30',
     '::aaaa',
     'aaaa::',
-    '536c:b906:3f24:5124:5e43:d9ee:22d8:6c30',
+    '6ab3:aaaa::ca1f:c840:f952:b286:25f2/64',
+    '6ab3::ca1f:c840:f952:b286:25f2',
+    '6ab3:aaaa::ca1f:c840:f952:b286:25f2',
     '536f:ae86:fc5e:4cf9:f308:838a:8dc5:d758',
     '98b6:b97e:aa7d:96e:2333:c6f1:d83e:66eb',
     'bde7:8615:1359:4359:5171:d111:86f8:6361',
@@ -94,6 +113,11 @@ try:
                                             lambda v: a(a, v))(
                                                 lambda s, x: x if len(x) == 4 else s(s, '0'+x))(i)
                                             for i in x.split(':')), 16))
+    """
+    Here restoring ipv6 to its previous form.
+    Example: aaaa:bbbb:cccc:dddd:eeee:ffff:1111:8888:64 (:64 - port) -> aaaa:bbbb:cccc:dddd:eeee:ffff:1111:8888/64
+    """
+    restore_ip(ipv6)
 except RecursionError:
     """
     Raising error with description
