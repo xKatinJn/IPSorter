@@ -2,7 +2,6 @@ from pprint import pprint
 
 
 def unpack_ipv6(ipv6_packed: list) -> None:
-
     """
     As you can see, this function unpacks ipv6, if it packed.
     Example: aaaa:: -> aaaa:0000:0000:0000:0000:0000:0000:0000
@@ -31,7 +30,13 @@ def unpack_ipv6(ipv6_packed: list) -> None:
             ipv6_packed[i] = ip
 
 
-def restore_ip(ipv6_sorted):
+def restore_ip(ipv6_sorted) -> None:
+    """
+    This function restores ipv6 to its previous form if
+    it has port.
+    Example: aaaa:bbbb:cccc:dddd:eeee:ffff:1111:8888:64 (:64 - port) -> aaaa:bbbb:cccc:dddd:eeee:ffff:1111:8888/64
+    """
+
     for i, ipv6_element in enumerate(ipv6_sorted):
         if len(ipv6_element.split(':')) > 8:
             port_index = ipv6_element.rfind(':')
@@ -115,7 +120,6 @@ try:
                                             for i in x.split(':')), 16))
     """
     Here restoring ipv6 to its previous form.
-    Example: aaaa:bbbb:cccc:dddd:eeee:ffff:1111:8888:64 (:64 - port) -> aaaa:bbbb:cccc:dddd:eeee:ffff:1111:8888/64
     """
     restore_ip(ipv6)
 except RecursionError:
